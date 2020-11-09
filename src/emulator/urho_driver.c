@@ -182,10 +182,16 @@ struct MouseEvent {
 };
 extern struct MouseEvent *mouseInput;
 
+extern int turnOffState;
+
 void check_input_events() {
+    if (turnOffState == 1) {
+        exit(0);
+    }
+
     // mouse events
     int buttons = (mouseInput->clicked ? 0x1 : 0x0);
-    //!TODO: implement another stuff?
+
     update_mouse(mouseInput->mouseX, mouseInput->mouseY, buttons, 7);
 
     // keyboard events

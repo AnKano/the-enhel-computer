@@ -16,6 +16,11 @@ void EmulatorControls::UpdateMouseInput(const Application &app) {
         mouseHist.x_ = mouseHist.x_ + mouseMove.x_;
         mouseHist.y_ = mouseHist.y_ + mouseMove.y_;
 
+        if (mouseHist.x_ >= 640) mouseHist.x_ = 640;
+        if (mouseHist.x_ < 0) mouseHist.x_ = 0;
+        if (mouseHist.y_ >= 400) mouseHist.y_ = 400;
+        if (mouseHist.y_ < 0) mouseHist.y_ = 0;
+
         mouseInput->mouseX = mouseHist.x_;
         mouseInput->mouseY = mouseHist.y_;
 

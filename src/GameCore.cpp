@@ -17,6 +17,7 @@ struct SoundEvent {
 
 SoundEvent *soundLastSample = nullptr;
 SoundEvent *soundEmulator = soundLastSample;
+int turnOffState = 0;
 
 template<typename T>
 void set_model(T *model, Urho3D::ResourceCache *cache, const std::string &model_name) {
@@ -80,7 +81,7 @@ void GameCore::Start() {
         window = new Window(context_);
         GetSubsystem<UI>()->GetRoot()->AddChild(window);
         window->SetStyle("Window");
-        window->SetSize(600, 70);
+        window->SetSize(600, 90);
         window->SetColor(Color(.0, .15, .3, .5));
         window->SetAlignment(HA_LEFT, VA_TOP);
 
@@ -138,11 +139,17 @@ void GameCore::Start() {
     soundStream->SetFormat(48000, true, true);
     soundSource = soundNode->CreateComponent<SoundSource>();
     soundSource->Play(soundStream);
+}
 
-    boost::async(boost::launch::async, [=]() {
-        return run(0, (char **) nullptr, image, dimx, dimy, depth,
-                   audio_count, audio_buffer, audio_mutex);
+void GameCore::ExecuteEmulator() {
+    turnOffState = 0;
+    boost::future<int> fu = boost::async(boost::launch::async, [=]() {
+        return run(0, (char **) nullptr, image, dimx, dimy, depth, audio_count, audio_buffer, audio_mutex);
     });
+}
+
+void GameCore::TurnOffEmulator() {
+    turnOffState = 1;
 }
 
 void GameCore::Setup() {
@@ -168,7 +175,7 @@ void GameCore::Stop() {
 void GameCore::HandleUpdate(StringHash eventType, VariantMap &eventData) {
     float timeStep = eventData[Update::P_TIMESTEP].GetFloat();
 
-    std::string str = "WASD, mouse and shift to move. T to toggle fill mode,\nG to toggle GUI, Tab to toggle mouse mode, Esc to quit.\n";
+    std::string str = "WASD, mouse and shift to move. T to toggle fill mode,\nZ to change mouse pointer controls to camera controls\nG to toggle GUI, Tab to toggle mouse mode, Space to execute emulator.\n";
     {
         std::ostringstream ss;
         ss << 1 / timeStep;
@@ -233,7 +240,9 @@ void GameCore::HandleKeyDown(StringHash eventType, VariantMap &eventData) {
         camera_->SetFillMode(camera_->GetFillMode() == FILL_WIREFRAME ? FILL_SOLID : FILL_WIREFRAME);
     else if (key == KEY_Z) {
         controlIterator++;
-        controlIterator %= 2;
+        controlIterator %= controls.size();
+    } else if (key == KEY_SPACE) {
+        this->ExecuteEmulator();
     }
 }
 

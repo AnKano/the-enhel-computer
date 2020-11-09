@@ -87,8 +87,6 @@ public:
 
     SharedPtr<Urho3D::Texture2D> renderTexture;
 
-    IntVector2 mouseHist;
-
     EmulatorControls emuControls;
     PlayerControls playerControls;
 
@@ -113,6 +111,10 @@ public:
     void Start() override;
 
     void Stop() override;
+
+    void ExecuteEmulator();
+
+    void TurnOffEmulator();
 
     void UpdateSound();
 
