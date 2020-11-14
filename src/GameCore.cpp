@@ -3,6 +3,7 @@
 #include "GameCore.h"
 
 #include "boost/thread.hpp"
+
 #include <cmath>
 
 extern "C" {
