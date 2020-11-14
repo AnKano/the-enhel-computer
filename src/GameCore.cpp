@@ -1,8 +1,4 @@
-#define BOOST_THREAD_PROVIDES_FUTURE
-
 #include "GameCore.h"
-
-#include "boost/thread.hpp"
 
 #include <cmath>
 
@@ -144,7 +140,7 @@ void GameCore::Start() {
 
 void GameCore::ExecuteEmulator() {
     turnOffState = 0;
-    boost::future<int> fu = boost::async(boost::launch::async, [=]() {
+    this->fu = std::async(std::launch::async, [=]() {
         return run(0, (char **) nullptr, image, dimx, dimy, depth, audio_count, audio_buffer, audio_mutex);
     });
 }

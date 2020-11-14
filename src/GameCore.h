@@ -64,6 +64,9 @@
 
 #include <vector>
 
+#include <thread>
+#include <future>
+
 using namespace Urho3D;
 
 class GameCore : public Application {
@@ -81,6 +84,8 @@ public:
     SharedPtr<Node> node_torch;
     SharedPtr<Node> lightNode;
     SharedPtr<Node> soundNode;
+
+    std::future<int> fu;
 
     SharedPtr<SoundSource> soundSource;
     SharedPtr<BufferedSoundStream> soundStream;
